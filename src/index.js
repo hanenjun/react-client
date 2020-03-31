@@ -4,12 +4,18 @@ import Login from './containers/login/login'
 import Register from './containers/register/register'
 import Main from './containers/main/main'
 import { HashRouter, Route, Switch } from 'react-router-dom'
+import store from './redux/store'
+import { Provider } from 'react-redux'
 ReactDom.render((
-    <HashRouter>
-        <Switch>
-            <Route paht="/login" component={Login}></Route>
-            <Route paht="/register" component={Register}></Route>
-            <Route component={Main}></Route>
-        </Switch>
-    </HashRouter>
+    <Provider store={store}>
+        <HashRouter>
+            
+            <Switch>
+                <Route path="/login" component={Login}></Route>
+                <Route path="/register" component={Register}></Route>
+                <Route component={Main}></Route>
+            </Switch>
+        </HashRouter>
+    </Provider>
+
 ), document.getElementById("root"))
