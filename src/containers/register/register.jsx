@@ -1,8 +1,12 @@
 import React, { Component } from 'react'
 import Logo from '../../components/logo/logo'
+import {connect} from 'react-redux'
+import '../../assets/css/index.less'
+import {register} from '../../redux/actions'
+import {Redirect} from 'react-router-dom'
 import { NavBar, WingBlank, List, InputItem, WhiteSpace, Button, Radio,Toast } from 'antd-mobile'
 const ListItem = List.Item
-export default class Register extends Component {
+class Register extends Component {
     constructor(props){
         super(props)
     }
@@ -14,7 +18,7 @@ export default class Register extends Component {
     }
     register = () =>{
         console.log(this.state)
-        Toast
+       this.props.register(this.state)
     }
     handleChange = (name,val) => {
         this.setState({
@@ -22,12 +26,17 @@ export default class Register extends Component {
         })
     }
     render() {
+    let {msg,redirectTo} = this.props.user
+    if(redirectTo){
+      return  <Redirect to={redirectTo}></Redirect>
+    }
         return (
             <div>
                 <NavBar>直&nbsp;聘</NavBar>
                 <Logo></Logo>
                 <WingBlank>
                     <List>
+        {msg?<div className="error-msg">{msg}</div>:null}
                         <InputItem placeholder="请输入用户名" onChange={v=>{this.handleChange("username",v)}}>用户名：</InputItem>
                         <WhiteSpace></WhiteSpace>
                         <InputItem placeholder="请输入密码" type="password"  onChange={v=>{this.handleChange("password",v)}}>密&nbsp;&nbsp;&nbsp;码：</InputItem>
@@ -51,3 +60,9 @@ export default class Register extends Component {
         )
     }
 }
+
+
+export default  connect(
+    state=>({user:state.user}),
+    {register}
+)(Register)
