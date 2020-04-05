@@ -9,7 +9,6 @@ import { Provider } from 'react-redux'
 ReactDom.render((
     <Provider store={store}>
         <HashRouter>
-            
             <Switch>
                 <Route path="/login" component={Login}></Route>
                 <Route path="/register" component={Register}></Route>
