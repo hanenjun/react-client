@@ -9,5 +9,9 @@ export const reqLogin = ({username,password,type}) => {
 
 
 export const reqUpdateUser = (user) => {
-    ajax('/update',user,'POST')
+   return ajax('/update',user,'POST')
+}
+
+export const reqUser = (user) => {
+   return ajax('/user',user)
 }

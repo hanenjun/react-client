@@ -1,25 +1,54 @@
-import {combineReducers} from 'redux'
-import {AUTH_SUCCESS,ERROR_MSG} from './action-types'
+import {
+    combineReducers
+} from 'redux'
+import {
+    getRedirectTo
+} from '../utils/index'
+import {
+    AUTH_SUCCESS,
+    ERROR_MSG,
+    RECEIVE_USER,
+    RESET_USER
+} from './action-types'
 let initUser = {
-    username:"",
-    type:"",
-    msg:"",
-    redirectTo:""
+    username: "",
+    type: "",
+    msg: "",
+    redirectTo: ""
 }
- function user(state=initUser,action){
-   switch (action.type) {
-       case AUTH_SUCCESS:
 
-           return {...action.data.data,redirectTo:"/"}
-           break;
+function user(state = initUser, action) {
+    switch (action.type) {
+        case AUTH_SUCCESS:
+            let {
+                type, header
+            } = action.data.data;
+            console.log(   type, header,action.data.data)
+            return {
+                ...action.data.data, redirectTo: getRedirectTo(type, header)
+            }
+            break;
         case ERROR_MSG:
             console.log(action)
-            return {...state,msg:action.data}
+            return {
+                ...state, msg: action.data
+            }
             break;
-       default:
-           return state
-           break;
-   }
+        case RECEIVE_USER:
+            console.log(action)
+            return   action.data
+            
+            break;
+        case RESET_USER:
+            console.log(action)
+            return {
+               ...initUser, msg:action.data
+            }
+            break;
+        default:
+            return state
+            break;
+    }
 }
 
 
