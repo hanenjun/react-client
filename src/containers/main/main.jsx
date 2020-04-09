@@ -81,7 +81,15 @@ class Main extends Component {
         const {navList} = this
         const path = this.props.location.pathname
         const currentNav = navList.find((item)=> item.path == path)
-        console.log(currentNav,path)
+        if(currentNav){
+            if(user.type==='laoban'){
+                navList[1].hide = 'true'
+            }else{
+                navList[0].hide = 'true'
+            }
+        }
+
+        console.log(navList)
         return (
             <div>
                 {currentNav?  <NavBar>{currentNav.title}</NavBar>:null}
