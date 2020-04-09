@@ -24,7 +24,7 @@ const receiveUser = (user) => ({
     data: user
 })
 
-const resetUser = (msg) => ({
+export const resetUser = (msg) => ({
     type: RESET_USER,
     data: msg
 })
