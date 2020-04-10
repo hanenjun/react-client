@@ -2,13 +2,15 @@ import {
     reqRegister,
     reqLogin,
     reqUpdateUser,
-    reqUser
+    reqUser,
+    reqUserList
 } from '../api'
 import {
     AUTH_SUCCESS,
     ERROR_MSG,
     RESET_USER,
-    RECEIVE_USER
+    RECEIVE_USER,
+    RECEIVE_USER_LIST
 } from './action-types'
 const authSuccess = (user) => ({
     type: AUTH_SUCCESS,
@@ -29,11 +31,28 @@ export const resetUser = (msg) => ({
     data: msg
 })
 
+ const receiveUserList = (data) => ({
+    type:RECEIVE_USER_LIST,
+    data:data
+})
+
 // const reqUser = () => ({
 //     re
 //     // type: RESET_USER,
 // })
+export const getUserList = (type) => {
+    return async dispatch =>{
+        let data = await reqUserList(type)
+        console.log(data)
 
+        if(data.data.code == 0){
+            dispatch(receiveUserList(data.data.data))
+        }
+        // else if(data.code == 1){
+        //     dispatch(receiveUserList(data.msg))
+        // }
+    }
+}
 export const register = (user) => {
     let {
         username,

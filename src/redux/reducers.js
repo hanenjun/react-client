@@ -8,7 +8,8 @@ import {
     AUTH_SUCCESS,
     ERROR_MSG,
     RECEIVE_USER,
-    RESET_USER
+    RESET_USER,
+    RECEIVE_USER_LIST
 } from './action-types'
 let initUser = {
     username: "",
@@ -51,8 +52,22 @@ function user(state = initUser, action) {
     }
 }
 
+let initUserList = []
+
+function userList(state = initUserList,action){
+    switch (action.type) {
+        case RECEIVE_USER_LIST:
+            return action.data
+            break;
+    
+        default:
+            return state
+            break;
+    }
+}
 
 
 export default combineReducers({
-    user
+    user,
+    userList
 })

@@ -24,7 +24,7 @@ class Personal extends Component {
     render() {
         const { username, type, header, post, info, salary, company } = this.props.user
         return (
-            <div>
+            <div style={{marginBottom:50,marginTop:50}}>
                 <Result img={<img src={require(`../../assets/images/${header}.png`)} style={{ width: 50 }} alt='header'></img>} title={username} message={company} />
                 <List renderHeader={() => '相关信息'}>
                     <Item multipleLine>

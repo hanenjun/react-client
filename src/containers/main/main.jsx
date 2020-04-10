@@ -92,7 +92,7 @@ class Main extends Component {
         console.log(navList)
         return (
             <div>
-                {currentNav?  <NavBar>{currentNav.title}</NavBar>:null}
+                {currentNav?  <NavBar className='stick-header'>{currentNav.title}</NavBar>:null}
               
                 <Switch>
                     <Route path='/dasheninfo' component={dashenInfo}></Route>
