@@ -6,7 +6,6 @@ import Main from './containers/main/main'
 import { HashRouter, Route, Switch ,BrowserRouter} from 'react-router-dom'
 import store from './redux/store'
 import { Provider } from 'react-redux'
-import  './test/sockeio'
 ReactDom.render((
     <Provider store={store}>
         <BrowserRouter>

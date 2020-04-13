@@ -5,6 +5,8 @@ import {
     reqUser,
     reqUserList
 } from '../api'
+import io from 'socket.io-client'
+
 import {
     AUTH_SUCCESS,
     ERROR_MSG,
@@ -31,9 +33,9 @@ export const resetUser = (msg) => ({
     data: msg
 })
 
- const receiveUserList = (data) => ({
-    type:RECEIVE_USER_LIST,
-    data:data
+const receiveUserList = (data) => ({
+    type: RECEIVE_USER_LIST,
+    data: data
 })
 
 // const reqUser = () => ({
@@ -41,11 +43,11 @@ export const resetUser = (msg) => ({
 //     // type: RESET_USER,
 // })
 export const getUserList = (type) => {
-    return async dispatch =>{
+    return async dispatch => {
         let data = await reqUserList(type)
         console.log(data)
 
-        if(data.data.code == 0){
+        if (data.data.code == 0) {
             dispatch(receiveUserList(data.data.data))
         }
         // else if(data.code == 1){
@@ -53,6 +55,7 @@ export const getUserList = (type) => {
         // }
     }
 }
+
 export const register = (user) => {
     let {
         username,
@@ -122,5 +125,28 @@ export const getUser = () => {
         } else {
             dispatch(resetUser(result.msg))
         }
+    }
+}
+
+function initIo() {
+    if(!io.socket){
+    io.socket = io('ws://localhost:5000')
+        // 连接服务器, 得到与服务器的连接对象
+    // 绑定监听, 接收服务器发送的消息
+        
+}
+io.socket.on('receiveMsg', function (data) {
+    console.log('客户端接收服务器发送的消息', data)
+})
+}
+export const sendMsg = ({
+    to,
+    from,
+    content
+}) => {
+    return dispatch => {
+        console.log('发送', to, from, content)
+        initIo()
+        io.socket.emit('sendMsg',{from,to,content})
     }
 }

@@ -13,6 +13,7 @@ import LaoBan from '../laoban/laoban'
 import Message from '../message/message'
 import Personal from '../personal/personal'
 import NoteFound from '../../components/not-found/not-found'
+import Chat from '../chat/chat'
 class Main extends Component {
     navList=[
        
@@ -78,7 +79,7 @@ class Main extends Component {
                 return <Redirect to={path}></Redirect>
             }
         }
-        const {navList} = this
+        let {navList} = this
         const path = this.props.location.pathname
         const currentNav = navList.find((item)=> item.path == path)
         if(currentNav){
@@ -88,17 +89,19 @@ class Main extends Component {
                 navList[0].hide = 'true'
             }
         }
-
+        navList = navList.filter(item=>!item.hide)
+        
         console.log(navList)
         return (
             <div>
                 {currentNav?  <NavBar className='stick-header'>{currentNav.title}</NavBar>:null}
-              
+
                 <Switch>
                     <Route path='/dasheninfo' component={dashenInfo}></Route>
                     <Route path='/laobaninfo' component={laobanInfo}></Route>
+                    <Route path='/chat/:userid' component={Chat}></Route>
                     {this.navList.map(item=>{
-                        return (
+                       return(
                             <Route path={item.path} component={item.component}></Route>
                         )
                     })}

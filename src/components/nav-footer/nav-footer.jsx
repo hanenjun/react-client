@@ -14,7 +14,7 @@ class NavFooter extends Component {
     render(){
         const path = this.props.location.pathname
         let  {navList} = this.props;
-        navList = navList.filter(item=>!item.hide)
+      
         console.log(navList)
         return (
             <TabBar>
