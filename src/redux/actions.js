@@ -26,7 +26,10 @@ const errorMsg = (msg) => ({
     type: ERROR_MSG,
     data: msg
 })
-
+export const receiv_msg = (chatMsg)=>({
+    type:RECEIVE_MSG,
+    data:chatMsg
+})
 const receiveUser = (user) => ({
     type: RECEIVE_USER,
     data: user
@@ -54,8 +57,8 @@ export const receiveMsgList = ({
         }
     }
 }
-async function getMsgList(dispatch) {
-    initIo()
+async function getMsgList(dispatch,userid) {
+    initIo(userid,dispatch)
     const response = await reqMsgList()
     const result = response.data
     if (result.code === 0) {
@@ -109,7 +112,7 @@ export const register = (user) => {
         })
         console.log(data.data)
         if (data.data.code == 0) {
-            getMsgList(dispatch)
+            getMsgList(dispatch,data.data._id)
             dispatch(authSuccess(data.data))
         } else {
             dispatch(errorMsg(data.data.msg))
@@ -130,7 +133,7 @@ export const login = (user) => {
             let data = await reqLogin(user)
             console.log(data)
             if (data.data.code == 0) {
-                getMsgList(dispatch)
+                getMsgList(dispatch,data.data._id)
                 dispatch(authSuccess(data.data))
             } else {
                 dispatch(errorMsg(data.data.msg))
@@ -156,7 +159,7 @@ export const getUser = () => {
         const response = await reqUser()
         const result = response.data
         if (result.code == 0) {
-            getMsgList(dispatch)
+            getMsgList(dispatch,result.data._id)
             dispatch(receiveUser(result.data))
         } else {
             dispatch(resetUser(result.msg))
@@ -164,7 +167,7 @@ export const getUser = () => {
     }
 }
 
-function initIo() {
+function initIo(userid,dispatch) {
     if (!io.socket) {
         io.socket = io('ws://localhost:5000')
         // 连接服务器, 得到与服务器的连接对象
@@ -173,6 +176,9 @@ function initIo() {
     }
     io.socket.on('receiveMsg', function (data) {
         console.log('客户端接收服务器发送的消息', data)
+    if(userid===data.from||userid===data.to){
+            dispatch(receiv_msg(data))
+    }
     })
 }
 export const sendMsg = ({

@@ -61,7 +61,7 @@ function userList(state = initUserList,action){
         case RECEIVE_USER_LIST:
             return action.data
             break;
-    
+      
         default:
             return state
             break;
@@ -88,6 +88,12 @@ function chat(state=initChat,action){
             }
             break;
         case RECEIVE_MSG:
+            const chatMsg = action.data;
+            return {
+                users:state.users,
+                chatMsgs:[...state.chatMsgs,chatMsg],
+                unReadCount:0
+            }
             break;
         default:
             return state
