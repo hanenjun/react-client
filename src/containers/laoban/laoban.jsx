@@ -4,7 +4,7 @@ import UserList from '../../components/user-list/user-list'
 import {getUserList} from '../../redux/actions'
  class LaoBan extends Component {
      componentDidMount(){
-        this.props.getUserList("dashen")
+        this.props.getUserList("laoban")
      }
     render(){
         console.log(this.props.userList)

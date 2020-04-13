@@ -20,3 +20,11 @@ export const reqUserList = (type) => {
    console.log(type)
    return ajax('/userList',{type},'GET')
 }
+
+export const reqMsgList = () => {
+   return ajax('/msglist')
+}
+
+export const reqReadMsg = (from) => {
+   return ajax('/readmsg',{from},'POST')
+}

@@ -9,7 +9,9 @@ import {
     ERROR_MSG,
     RECEIVE_USER,
     RESET_USER,
-    RECEIVE_USER_LIST
+    RECEIVE_USER_LIST,
+    RECEIVE_MSG_LIST,
+    RECEIVE_MSG
 } from './action-types'
 let initUser = {
     username: "",
@@ -66,8 +68,35 @@ function userList(state = initUserList,action){
     }
 }
 
+let initChat={
+    users:{},
+    chatMsgs:[
+
+    ],
+    unReadCount:0
+}
+
+function chat(state=initChat,action){
+    switch (action.type) {
+        case RECEIVE_MSG_LIST:
+            const {users,chatMsgs}  =action.data
+            console.log(action.data)
+            return {
+                users,
+                chatMsgs,
+                unReadCount:0
+            }
+            break;
+        case RECEIVE_MSG:
+            break;
+        default:
+            return state
+            break;
+    }
+}
 
 export default combineReducers({
     user,
-    userList
+    userList,
+    chat
 })

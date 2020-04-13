@@ -3,7 +3,9 @@ import {
     reqLogin,
     reqUpdateUser,
     reqUser,
-    reqUserList
+    reqUserList,
+    reqMsgList,
+    reqReadMsg
 } from '../api'
 import io from 'socket.io-client'
 
@@ -12,7 +14,9 @@ import {
     ERROR_MSG,
     RESET_USER,
     RECEIVE_USER,
-    RECEIVE_USER_LIST
+    RECEIVE_USER_LIST,
+    RECEIVE_MSG_LIST,
+    RECEIVE_MSG
 } from './action-types'
 const authSuccess = (user) => ({
     type: AUTH_SUCCESS,
@@ -38,6 +42,35 @@ const receiveUserList = (data) => ({
     data: data
 })
 
+export const receiveMsgList = ({
+    users,
+    chatMsgs
+}) => {
+    return {
+        type: RECEIVE_MSG_LIST,
+        data: {
+            users,
+            chatMsgs
+        }
+    }
+}
+async function getMsgList(dispatch) {
+    initIo()
+    const response = await reqMsgList()
+    const result = response.data
+    if (result.code === 0) {
+        const {
+            users,
+            chatMsgs
+        } = result.data
+        console.log(users,
+            chatMsgs)
+        dispatch(receiveMsgList({
+            users,
+            chatMsgs
+        }))
+    }
+}
 // const reqUser = () => ({
 //     re
 //     // type: RESET_USER,
@@ -76,6 +109,7 @@ export const register = (user) => {
         })
         console.log(data.data)
         if (data.data.code == 0) {
+            getMsgList(dispatch)
             dispatch(authSuccess(data.data))
         } else {
             dispatch(errorMsg(data.data.msg))
@@ -96,6 +130,7 @@ export const login = (user) => {
             let data = await reqLogin(user)
             console.log(data)
             if (data.data.code == 0) {
+                getMsgList(dispatch)
                 dispatch(authSuccess(data.data))
             } else {
                 dispatch(errorMsg(data.data.msg))
@@ -121,6 +156,7 @@ export const getUser = () => {
         const response = await reqUser()
         const result = response.data
         if (result.code == 0) {
+            getMsgList(dispatch)
             dispatch(receiveUser(result.data))
         } else {
             dispatch(resetUser(result.msg))
@@ -129,15 +165,15 @@ export const getUser = () => {
 }
 
 function initIo() {
-    if(!io.socket){
-    io.socket = io('ws://localhost:5000')
+    if (!io.socket) {
+        io.socket = io('ws://localhost:5000')
         // 连接服务器, 得到与服务器的连接对象
-    // 绑定监听, 接收服务器发送的消息
-        
-}
-io.socket.on('receiveMsg', function (data) {
-    console.log('客户端接收服务器发送的消息', data)
-})
+        // 绑定监听, 接收服务器发送的消息
+
+    }
+    io.socket.on('receiveMsg', function (data) {
+        console.log('客户端接收服务器发送的消息', data)
+    })
 }
 export const sendMsg = ({
     to,
@@ -146,7 +182,13 @@ export const sendMsg = ({
 }) => {
     return dispatch => {
         console.log('发送', to, from, content)
-        initIo()
-        io.socket.emit('sendMsg',{from,to,content})
+        io.socket.emit('sendMsg', {
+            from,
+            to,
+            content
+        })
     }
 }
+
+
+// export const 
