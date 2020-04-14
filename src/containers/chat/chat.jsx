@@ -1,7 +1,8 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { NavBar, List, InputItem, Button ,Grid} from 'antd-mobile'
-import { sendMsg } from '../../redux/actions'
+import { NavBar, List, InputItem, Button ,Grid,Icon} from 'antd-mobile'
+import { sendMsg ,readMsg} from '../../redux/actions'
+import QueueAnim from 'rc-queue-anim'
 const Item = List.Item
 class Chat extends Component {
     state = {
@@ -16,13 +17,25 @@ class Chat extends Component {
             this.props.sendMsg({ to, from, content })
         }
         this.setState({ content: '' })
-        this.setState({isShow:!this.state.isShow})
+        this.setState({isShow:false})
     }
     componentWillMount(){
         const emojis  =['😀','😃','😄','😁','😆','😅','🥰','😍','😘','😗','😀','😃','😄','😁','😆','😅','🥰','😍','😘','😗','😀','😃','😄','😁','😆','😅','🥰','😍','😘','😗','😀','😃','😄','😁','😆','😅','🥰','😍','😘','😗']
         this.emojis=emojis.map(item=>({
             text:item
         }))
+    }
+    componentDidMount(){
+        this.props.readMsg(this.props.match.params.userid,this.props.user._id)
+        window.scrollTo(0,document.body.scrollHeight)
+    }
+    componentDidUpdate(){
+        window.scrollTo(0,document.body.scrollHeight)
+
+    }
+    componentWillUnmount(){
+        this.props.readMsg(this.props.match.params.userid,this.props.user._id)
+
     }
     render() {
        if(this.state.isShow){
@@ -31,7 +44,7 @@ class Chat extends Component {
           },0)
        }
 
-
+       
         const { users, chatMsgs } = this.props.chat
 
         const { user } = this.props
@@ -40,21 +53,25 @@ class Chat extends Component {
             return null
         }
         const targetId = this.props.match.params.userid
+        console.log(targetId)
         const chatId = [meId, targetId].sort().join('_')
-        const {header} = users[targetId]
-        console.log( users[targetId])
+        const {header,username} = users[targetId]
+        console.log( user)
+        const meHeader = user.header
         const msgs = chatMsgs.filter(msg => msg.chat_id === chatId)
         const targetIcon=header?require(`../../assets/images/${header}.png`):null
+        const meIcon=header?require(`../../assets/images/${meHeader}.png`):null
         return (
             <div id='chat-page'>
-                <NavBar>aaaa</NavBar>
-                <List>
+                <NavBar icon={<Icon type='left' onClick={()=>this.props.history.goBack()}></Icon>} className='stick-header'>{username}</NavBar>
+                <List style={{marginTop:50,marginBottom:50}}>
+                    <QueueAnim type='left' delay={10}>
                     {msgs.map(msg => {
                         console.log(msg)
                         console.log(meId,msg.from)
                         if (meId === msg.from) {
                             return (
-                                <Item key={msg._id} className={'chat-me'} extra={<img src={targetIcon}></img>} >
+                                <Item  key={msg._id} className={'chat-me'} extra={<img src={meIcon}></img>} >
                                 {msg.content}
                             </Item>
                               
@@ -67,12 +84,14 @@ class Chat extends Component {
                             )
                         }
                     })}
+                    </QueueAnim>
+                   
                 </List>
                 <div className='am-tab-bar'>
                     <InputItem value={this.state.content} onChange={val => this.setState({ content: val })} placeholder='请输入' extra={<span> 
                     <span onClick={()=>this.setState({isShow:!this.state.isShow})}>😀&nbsp;&nbsp;&nbsp;</span>
                     <span onClick={this.handleSend}>发送</span>
-                    </span>} onFocus={()=>this.setState({isShow:!this.state.isShow})}></InputItem>
+                    </span>} onFocus={()=>this.setState({isShow:false})}></InputItem>
                    {this.state.isShow? <Grid
                         
                         data={this.emojis}
@@ -91,5 +110,5 @@ class Chat extends Component {
 }
 export default connect(
     state => ({ user: state.user, chat: state.chat }),
-    { sendMsg }
+    { sendMsg,readMsg }
 )(Chat)

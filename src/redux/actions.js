@@ -16,7 +16,8 @@ import {
     RECEIVE_USER,
     RECEIVE_USER_LIST,
     RECEIVE_MSG_LIST,
-    RECEIVE_MSG
+    RECEIVE_MSG,
+    MSG_READ
 } from './action-types'
 const authSuccess = (user) => ({
     type: AUTH_SUCCESS,
@@ -26,9 +27,16 @@ const errorMsg = (msg) => ({
     type: ERROR_MSG,
     data: msg
 })
-export const receiv_msg = (chatMsg)=>({
-    type:RECEIVE_MSG,
-    data:chatMsg
+
+const msgRead =({count,from,to}) => ({type:MSG_READ,data:{count,from,to}})
+
+export const receiv_msg = (chatMsg, userid) => ({
+    type: RECEIVE_MSG,
+    data: {
+        chatMsg,
+        userid
+    },
+
 })
 const receiveUser = (user) => ({
     type: RECEIVE_USER,
@@ -47,18 +55,20 @@ const receiveUserList = (data) => ({
 
 export const receiveMsgList = ({
     users,
-    chatMsgs
+    chatMsgs,
+    userid
 }) => {
     return {
         type: RECEIVE_MSG_LIST,
         data: {
             users,
-            chatMsgs
+            chatMsgs,
+            userid
         }
     }
 }
-async function getMsgList(dispatch,userid) {
-    initIo(userid,dispatch)
+async function getMsgList(dispatch, userid) {
+    initIo(userid, dispatch)
     const response = await reqMsgList()
     const result = response.data
     if (result.code === 0) {
@@ -70,7 +80,8 @@ async function getMsgList(dispatch,userid) {
             chatMsgs)
         dispatch(receiveMsgList({
             users,
-            chatMsgs
+            chatMsgs,
+            userid
         }))
     }
 }
@@ -92,6 +103,7 @@ export const getUserList = (type) => {
     }
 }
 
+
 export const register = (user) => {
     let {
         username,
@@ -112,11 +124,24 @@ export const register = (user) => {
         })
         console.log(data.data)
         if (data.data.code == 0) {
-            getMsgList(dispatch,data.data._id)
+            getMsgList(dispatch, data.data._id)
             dispatch(authSuccess(data.data))
         } else {
             dispatch(errorMsg(data.data.msg))
         }
+    }
+}
+
+export const readMsg = (userid,id)=>{
+    return async dispatch=>{
+      const response =  await reqReadMsg(userid)
+      const result = response.data
+      if(result.code===0){
+          const count = result.data
+          const from = userid
+          const to = id
+          dispatch(msgRead({count,from,to}))
+      }
     }
 }
 
@@ -133,7 +158,7 @@ export const login = (user) => {
             let data = await reqLogin(user)
             console.log(data)
             if (data.data.code == 0) {
-                getMsgList(dispatch,data.data._id)
+                getMsgList(dispatch, data.data._id)
                 dispatch(authSuccess(data.data))
             } else {
                 dispatch(errorMsg(data.data.msg))
@@ -159,7 +184,7 @@ export const getUser = () => {
         const response = await reqUser()
         const result = response.data
         if (result.code == 0) {
-            getMsgList(dispatch,result.data._id)
+            getMsgList(dispatch, result.data._id)
             dispatch(receiveUser(result.data))
         } else {
             dispatch(resetUser(result.msg))
@@ -167,7 +192,7 @@ export const getUser = () => {
     }
 }
 
-function initIo(userid,dispatch) {
+function initIo(userid, dispatch) {
     if (!io.socket) {
         io.socket = io('ws://localhost:5000')
         // 连接服务器, 得到与服务器的连接对象
@@ -176,9 +201,9 @@ function initIo(userid,dispatch) {
     }
     io.socket.on('receiveMsg', function (data) {
         console.log('客户端接收服务器发送的消息', data)
-    if(userid===data.from||userid===data.to){
-            dispatch(receiv_msg(data))
-    }
+        if (userid === data.from || userid === data.to) {
+            dispatch(receiv_msg(data, userid))
+        }
     })
 }
 export const sendMsg = ({

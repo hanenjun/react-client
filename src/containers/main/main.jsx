@@ -91,7 +91,7 @@ class Main extends Component {
         }
         navList = navList.filter(item=>!item.hide)
         
-        console.log(navList)
+        console.log(this.props.unReadCount)
         return (
             <div>
                 {currentNav?  <NavBar className='stick-header'>{currentNav.title}</NavBar>:null}
@@ -107,13 +107,14 @@ class Main extends Component {
                     })}
                     <Route component={NoteFound}></Route>
                 </Switch>
-                {currentNav?  <NavFooter navList={navList}></NavFooter>:null}
+                
+                {currentNav?  <NavFooter navList={navList} unReadCount={this.props.unReadCount}></NavFooter>:null}
             </div>
         )
     }
 }
 
 export default connect(
-    state => ({ user: state.user }),
+    state => ({ user: state.user,unReadCount:state.chat.unReadCount }),
     {getUser}
 )(Main)

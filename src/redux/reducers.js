@@ -11,7 +11,8 @@ import {
     RESET_USER,
     RECEIVE_USER_LIST,
     RECEIVE_MSG_LIST,
-    RECEIVE_MSG
+    RECEIVE_MSG,
+    MSG_READ,
 } from './action-types'
 let initUser = {
     username: "",
@@ -26,7 +27,7 @@ function user(state = initUser, action) {
             let {
                 type, header
             } = action.data.data;
-            console.log(   type, header,action.data.data)
+            console.log(type, header, action.data.data)
             return {
                 ...action.data.data, redirectTo: getRedirectTo(type, header)
             }
@@ -39,13 +40,13 @@ function user(state = initUser, action) {
             break;
         case RECEIVE_USER:
             console.log(action)
-            return   action.data
-            
+            return action.data
+
             break;
         case RESET_USER:
             console.log(action)
             return {
-               ...initUser, msg:action.data
+                ...initUser, msg: action.data
             }
             break;
         default:
@@ -56,45 +57,72 @@ function user(state = initUser, action) {
 
 let initUserList = []
 
-function userList(state = initUserList,action){
+function userList(state = initUserList, action) {
     switch (action.type) {
         case RECEIVE_USER_LIST:
             return action.data
             break;
-      
+
         default:
             return state
             break;
     }
 }
 
-let initChat={
-    users:{},
-    chatMsgs:[
+let initChat = {
+    users: {},
+    chatMsgs: [
 
     ],
-    unReadCount:0
+    unReadCount: 0
 }
 
-function chat(state=initChat,action){
+function chat(state = initChat, action) {
     switch (action.type) {
         case RECEIVE_MSG_LIST:
-            const {users,chatMsgs}  =action.data
+            const {
+                users, chatMsgs, userid
+            } = action.data
             console.log(action.data)
             return {
                 users,
                 chatMsgs,
-                unReadCount:0
+                unReadCount: chatMsgs.reduce((preTotal, msg) => {
+                    console.log(preTotal, msg,userid,(!msg.read && msg.to === userid ? 1 : 0))
+                   return preTotal + (!msg.read && msg.to === userid ? 1 : 0)
+                }, 0)
             }
             break;
         case RECEIVE_MSG:
-            const chatMsg = action.data;
+            const {
+                chatMsg
+            } = action.data;
             return {
-                users:state.users,
-                chatMsgs:[...state.chatMsgs,chatMsg],
-                unReadCount:0
+                users: state.users,
+                    chatMsgs: [...state.chatMsgs, chatMsg],
+                    unReadCount: state.unReadCount + (!chatMsg.read && chatMsg.to === action.data.userid ? 1 : 0)
             }
             break;
+            case MSG_READ:
+                const {from,to,count} = action.data
+                // state.chatMsgs.forEach(msg=>{
+                //     if(msg.from===from&&msg.to===to&&!msg.read){
+                //         msg.read =true
+                //     }
+                // })
+                return {
+                    users: state.users,
+                        chatMsgs: state.chatMsgs.map(msg=>{
+                            if(msg.from===from&&msg.to===to&&!msg.read){
+                       
+                             return   {...msg,read:true}
+                            }else{
+                                return msg
+                            }
+                        }),
+                        unReadCount: state.unReadCount - count
+                }
+                break
         default:
             return state
             break;

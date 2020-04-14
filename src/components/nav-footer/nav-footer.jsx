@@ -9,17 +9,18 @@ class NavFooter extends Component {
         super(props)
     }
     static propTypes = {
-        navList : PropTypes.array.isRequired
+        navList : PropTypes.array.isRequired,
+        unReadCount:PropTypes.number.isRequired
     }
     render(){
         const path = this.props.location.pathname
-        let  {navList} = this.props;
+        let  {navList,unReadCount} = this.props;
       
         console.log(navList)
         return (
             <TabBar>
                 {navList.map((item,index)=>(
-                    <Item key={item.path} title={item.text} icon={{uri:require(`./images/nav/${item.icon}.png`)}} selectedIcon={{uri:require(`./images/nav/${item.icon}-selected.png`)}} selected={path === item.path} onPress={()=>this.props.history.replace(item.path)}></Item>
+                    <Item badge={item.path==='/message'?unReadCount:0} key={item.path} title={item.text} icon={{uri:require(`./images/nav/${item.icon}.png`)}} selectedIcon={{uri:require(`./images/nav/${item.icon}-selected.png`)}} selected={path === item.path} onPress={()=>this.props.history.replace(item.path)}></Item>
                 ))}
                 
             </TabBar>
