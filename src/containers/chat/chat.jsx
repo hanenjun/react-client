@@ -1,11 +1,12 @@
 import React, { Component } from 'react'
 import { connect } from 'react-redux'
-import { NavBar, List, InputItem, Button } from 'antd-mobile'
+import { NavBar, List, InputItem, Button ,Grid} from 'antd-mobile'
 import { sendMsg } from '../../redux/actions'
 const Item = List.Item
 class Chat extends Component {
     state = {
-        content: ''
+        content: '',
+        isShow:false
     }
     handleSend = () => {
         const from = this.props.user._id;
@@ -15,8 +16,22 @@ class Chat extends Component {
             this.props.sendMsg({ to, from, content })
         }
         this.setState({ content: '' })
+        this.setState({isShow:!this.state.isShow})
+    }
+    componentWillMount(){
+        const emojis  =['😀','😃','😄','😁','😆','😅','🥰','😍','😘','😗','😀','😃','😄','😁','😆','😅','🥰','😍','😘','😗','😀','😃','😄','😁','😆','😅','🥰','😍','😘','😗','😀','😃','😄','😁','😆','😅','🥰','😍','😘','😗']
+        this.emojis=emojis.map(item=>({
+            text:item
+        }))
     }
     render() {
+       if(this.state.isShow){
+          setTimeout(()=>{
+            window.dispatchEvent(new Event('resize'))
+          },0)
+       }
+
+
         const { users, chatMsgs } = this.props.chat
 
         const { user } = this.props
@@ -54,7 +69,21 @@ class Chat extends Component {
                     })}
                 </List>
                 <div className='am-tab-bar'>
-                    <InputItem value={this.state.content} onChange={val => this.setState({ content: val })} placeholder='请输入' extra={<span onClick={this.handleSend}>发送</span>}></InputItem>
+                    <InputItem value={this.state.content} onChange={val => this.setState({ content: val })} placeholder='请输入' extra={<span> 
+                    <span onClick={()=>this.setState({isShow:!this.state.isShow})}>😀&nbsp;&nbsp;&nbsp;</span>
+                    <span onClick={this.handleSend}>发送</span>
+                    </span>} onFocus={()=>this.setState({isShow:!this.state.isShow})}></InputItem>
+                   {this.state.isShow? <Grid
+                        
+                        data={this.emojis}
+                        columnNum={8}
+                        carouselMaxRow={4}
+                        isCarousel={true}
+                        onClick={item=>{
+                            console.log(item)
+                            this.setState({content:this.state.content + item.text})
+                        }}
+                    ></Grid>:null}
                 </div>
             </div>
         )
