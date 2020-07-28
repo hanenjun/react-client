@@ -102,7 +102,7 @@ class Main extends Component {
                     <Route path='/chat/:userid' component={Chat}></Route>
                     {this.navList.map(item=>{
                        return(
-                            <Route path={item.path} component={item.component}></Route>
+                            <Route key={item} path={item.path} component={item.component}></Route>
                         )
                     })}
                     <Route component={NoteFound}></Route>

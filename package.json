@@ -6,6 +6,7 @@
     "antd-mobile": "^2.1.8",
     "axios": "^0.18.0",
     "css-loader": "^3.5.1",
+    "http-proxy-middleware": "^1.0.4",
     "js-cookie": "^2.2.1",
     "postcss-loader": "^3.0.0",
     "prop-types": "^15.7.2",

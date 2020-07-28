@@ -7,6 +7,9 @@ const Brief = Item.Brief
 
 
 class Message extends Component {
+    constructor(props){
+        super(props)
+    }
     getListMsga(msgs,userid) {
         const lastMsgObjs = {}
         msgs.forEach(msg => {

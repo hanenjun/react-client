@@ -14,16 +14,15 @@ const Body = Card.Body;
         console.log(userList)
 
         return (
-            <WingBlank style={{marginBottom:50,marginTop:50}}>
-                <QueueAnim type='scale'>
+            <WingBlank style={{marginBottom:50,marginTop:50}} >
+                {/* <QueueAnim type='scale' > */}
                 {
                     userList.map(user => (
                         <div key={user._id}>
                             <WhiteSpace></WhiteSpace>
                             <Card onClick={()=>this.props.history.push(`/chat/${user._id}`)}>
                                 {user.header ? <Header thumb={require(`../../assets/images/${user.header}.png`)} extra={`${user.username}`}></Header> : null}
-
-                                <Body>
+                                <Body >
                                     {user.post ? <div>职位：{`${user.post}`}</div> : null}
 
                                     {user.company ? <div>公司：{`${user.company}`}</div> : null}
@@ -36,7 +35,7 @@ const Body = Card.Body;
                     ))
                 }
 
-                </QueueAnim>
+                {/* </QueueAnim> */}
                
             </WingBlank>
         )
