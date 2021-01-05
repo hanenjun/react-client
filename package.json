@@ -4,7 +4,7 @@
   "private": true,
   "dependencies": {
     "antd-mobile": "^2.1.8",
-    "axios": "^0.18.0",
+    "axios": "^0.21.1",
     "css-loader": "^3.5.1",
     "http-proxy-middleware": "^1.0.4",
     "js-cookie": "^2.2.1",
